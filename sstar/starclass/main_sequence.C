@@ -213,6 +213,11 @@ void main_sequence::update_wind_constant() {
     }
     else 
         wind_constant = dm_dj;
+                    
+    // (AD: 15 Sep 2020) to account for clumping etc
+    // or the inaccuracies in the Sobolev method, see
+    // J.O. Sundqvist+ 2019 and R. Bjorklund+ 2020
+     wind_constant = scaling_factor_sw * wind_constant;    
 }
 
 
@@ -723,6 +728,8 @@ real main_sequence::nucleair_evolution_timescale() {
 
 // Adjust radius & luminosity at relative_age
 void main_sequence::instantaneous_element() {
+  //cout<<"MS :"<<scaling_factor_sw<<endl;
+
 
   luminosity       = main_sequence_luminosity(relative_age, 
 					      relative_mass, metalicity);

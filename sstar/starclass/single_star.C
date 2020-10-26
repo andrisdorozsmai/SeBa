@@ -15,6 +15,7 @@
 single_star * new_single_star(stellar_type type,	// All defaults are
 			      int  id,			// now specified in
 			      real z,
+			      real wind_scaling, //(AD: 15 Oct 2020) scaling factor for stellar wind
 			      real t_cur,
 			      real t_rel,
 			      real m_rel,
@@ -69,8 +70,7 @@ single_star * new_single_star(stellar_type type,	// All defaults are
            exit(1);
 		    
   }
-  
-  element->initialize(id, z, t_cur, t_rel, m_rel, m_tot, m_core, co_core);
+  element->initialize(id, z, wind_scaling, t_cur, t_rel, m_rel, m_tot, m_core, co_core);
 
   element->post_constructor();
 
@@ -99,6 +99,7 @@ single_star::single_star(node* n) : star(n) {
     magnetic_field = rotation_period = 0;
     birth_mass=0;
     time_offset=0;
+    scaling_factor_sw = 1.0;
 }
 
 
@@ -133,6 +134,7 @@ single_star::single_star(single_star & rv) : star(rv) {
   birth_mass      = rv.birth_mass;
   
   time_offset     = rv.time_offset;
+  scaling_factor_sw = rv.scaling_factor_sw;
   
   //              copy stellar history.
   previous.current_time    = rv.previous.current_time;
@@ -244,7 +246,7 @@ void single_star::post_constructor() {
 }
 
 
-void single_star::initialize(int id, real z, real t_cur,
+void single_star::initialize(int id, real z, real wind_scaling, real t_cur,
 			     real t_rel, real m_rel, real m_tot,
 			     real m_core, real co_core) {
 
@@ -268,6 +270,7 @@ void single_star::initialize(int id, real z, real t_cur,
   core_mass = m_core;
   COcore_mass = co_core;
   time_offset = t_cur;
+  scaling_factor_sw = wind_scaling; //(AD: 15 Oct 2020) scaling factor for stellar wind
   
   instantaneous_element();
 
@@ -1350,7 +1353,7 @@ void single_star::stellar_wind(const real dt) {
     // wind_constant in solar masses per year
     update_wind_constant();
     real wind_mass = wind_constant * dt * 1E6;  
-    
+
     //PRC(wind_constant);PRC(dt);PRL(wind_mass);
 
     if (wind_mass > 0){    

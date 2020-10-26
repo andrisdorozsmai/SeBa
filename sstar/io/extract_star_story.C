@@ -133,6 +133,7 @@ void  addstar1(node * b, real t_rel, stellar_type type,
       else {
          int id = b->get_index();
 	 real z = cnsts.parameters(solar_metalicity); //added by ST on Feb 19th 2009
+	 real wind_scaling = 1.0; //(AD 16/10/2020) so that windscaling can be passed as an argument
          real t_cur=0, t_rel=0, m_rel=1, m_env=0, m_core=0.01, co_core=0;
 	 real t_eff=0, l_eff=0;
 	 real p_rot=0, b_fld=0;
@@ -150,7 +151,7 @@ void  addstar1(node * b, real t_rel, stellar_type type,
 
          if (local_type!=NAS) {		// is the star properly defined.
             type = local_type;
-            single_star* new_star = new_single_star(type, id, z, t_cur, t_rel,
+            single_star* new_star = new_single_star(type, id, z, wind_scaling, t_cur, t_rel,
 			 m_rel, m_tot, m_core, co_core, p_rot, b_fld,  b);
 
          }
@@ -164,14 +165,14 @@ void  addstar1(node * b, real t_rel, stellar_type type,
 
 	    // Treat by dynamics pre-requested black holes
 	    if(getiq(b->get_log_story(), "black_hole")==1) {
-	      single_star* new_star = new_single_star(Black_Hole, id, z,
+	      single_star* new_star = new_single_star(Black_Hole, id, z, wind_scaling,
 						      t_cur, t_rel,
 						      m_rel, m_tot, m_tot,
 						      m_tot,
 						      p_rot, b_fld, b);
 	    }
 	    else {
-	      single_star* new_star = new_single_star(type, id, z,
+	      single_star* new_star = new_single_star(type, id, z, wind_scaling,
 						    t_cur, t_rel,
 						    m_rel, m_tot, m_core,
 						    co_core,

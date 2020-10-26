@@ -222,6 +222,8 @@ int main(int argc, char ** argv) {
     real r_hm = 1;
     real t_hc = 1;
     real metal = cnsts.parameters(Zsun);
+    //(AD: 15 Oct 2020) scaling factor added for stellar wind
+    real wind_scaling = 1.0; // default parameter
 
 
     char *mfc = new char[64];
@@ -263,7 +265,7 @@ int main(int argc, char ** argv) {
 
     extern char *poptarg;
     int c;
-    const char *param_string = "n:N:RDSM:m:x:F:f:A:a:y:G:g:E:e:v:U:u:Q:q:T:t:I:O:w:P:p:n:s:z:c:";
+    const char *param_string = "n:N:RDSM:m:x:F:f:A:a:y:G:g:E:e:v:U:u:Q:q:T:t:I:O:w:P:p:n:s:z:c:W:";
 
     while ((c = pgetopt(argc, argv, param_string)) != -1)
 	switch(c) {
@@ -336,6 +338,8 @@ int main(int argc, char ** argv) {
                 break;
            case 'c': strcpy(star_type_string, poptarg);
 	           type = extract_stellar_type_string(star_type_string);
+                break;
+           case 'W': wind_scaling = atof(poptarg); //(AD: 15 Oct 2020) scaling factor added for stellar wind
                 break;
             case '?': params_to_usage(cerr, argv[0], param_string);
 		      exit(1);
@@ -447,7 +451,7 @@ int main(int argc, char ** argv) {
       root->get_starbase()->set_stellar_evolution_scaling(m_prim, r_hm, t_hc);
       the_binary = root->get_oldest_daughter();
       add_secondary(the_binary, m_sec/m_prim);
-      addstar(root, start_time, type, z);
+      addstar(root, start_time, type, z, wind_scaling); //(AD: 15 Oct 2020) scaling factor added for stellar wind
 //      root->get_starbase()->set_seba_counters(new_seba_counters);
 
 //      pp(root, cerr);

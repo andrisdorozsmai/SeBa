@@ -22,6 +22,7 @@ sub_giant::sub_giant(hertzsprung_gap & h) : single_star(h) {
   update();
 
   post_constructor();
+
 }
 
 // (GN+ SilT Feb 2011): new constructor for merger products of
@@ -492,10 +493,29 @@ void sub_giant::update_wind_constant() {
     real dm_lbv = 0;
     real x_lbv = 1.0E-5*radius*sqrt(luminosity);
     if(luminosity > 6.0E5 && x_lbv > 1.0) {
-        dm_lbv = 0.1 * pow(x_lbv-1.0, 3)*(luminosity/6.0E5-1.0);
-    }
-    
-    wind_constant = max(max(max(dm_wr, dm_dj), dm_r), 0.0)+dm_lbv;
+        //(AD: 15 Sep 2020) Variation 1: Standard Seba
+        //dm_lbv = 0.1 * pow(x_lbv-1.0, 3)*(luminosity/6.0E5-1.0);
+        //wind_constant = scaling_factor_sw * max(max(max(dm_wr, dm_dj_v), dm_r), 0.0) + dm_lbv; 
+        
+        //(AD: 15 Sep 2020)  Variation 2: Belczynski et al 2010
+        dm_lbv = 1.5*pow(10,-4); // 
+        wind_constant = dm_lbv; // Belczynski doesn't add the other mass loss rates on top of
+                                // the others
+
+        //(AD: 15 Sep 2020)  variation 3: D.J. Hiller et al 2001,
+        // also see K. Davidson, R.M. Humphreys: Eta Carinea and Supernova impostors, eq 4.1
+        //dm_lbv = pow(10,-4) * pow((luminosity/6.0E5),0.75) ;
+        //wind_constant = dm_lbv; // Highly uncertain, but the formula follows from
+                                // observations anyway, so don't add the other mass loss rates
+                            
+
+        return;
+        }
+        
+    //(AD: 15 Sep 2020) to account for clumping etc
+    // or the inaccuracies in the Sobolev method, see
+    // J.O. Sundqvist+ 2019 and R. Bjorklund+ 2020
+    wind_constant = scaling_factor_sw * max(max(max(dm_wr, dm_dj), dm_r), 0.0)+dm_lbv;
     
 }
 

@@ -70,6 +70,7 @@ class  single_star : public star
         real accreted_mass;
 
         star_hist previous;
+        real scaling_factor_sw;  //(AD: 15 Oct 2020) scaling factor for stellar wind
 
     public:
    
@@ -138,7 +139,8 @@ class  single_star : public star
       //        bool medium_mass_star();
       //        bool high_mass_star();
 	
-        void initialize(int id, real z, real t_cur,
+	    //(AD: 15 Oct 2020) scaling factor added for stellar wind
+        void initialize(int id, real z, real wind_scaling, real t_cur, 
 			real t_rel, real m_rel, real m_tot,
 			real m_core, real co_core);
 
@@ -496,6 +498,7 @@ void  addstar(node*,
 	      real t_rel=0,
 	      stellar_type type=Main_Sequence,
 	      real z = cnsts.parameters(Zsun),
+	      real windscaling = 1.0,
               int id = 1,
 	      bool verbose = false);
 

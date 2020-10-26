@@ -10,6 +10,7 @@
 inline  single_star * new_single_star(stellar_type type,  // All defaults are
 				      int  id,		  // now specified in
 				      real z,             // star_state.h
+				      real wind_scaling,  //(AD: 15 Oct 2020) scaling factor for stellar wind
 				      real t_cur,	  
 				      real t_rel,	  
 				      real m_rel,
@@ -61,7 +62,7 @@ inline  single_star * new_single_star(stellar_type type,  // All defaults are
          default: element = new main_sequence(n);
       }
 
-      element->initialize(id, z, t_cur, t_rel, m_rel, m_tot, m_core, co_core);
+      element->initialize(id, z, wind_scaling, t_cur, t_rel, m_rel, m_tot, m_core, co_core);
       
       return element;
    }

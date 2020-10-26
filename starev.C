@@ -17,7 +17,6 @@
 //++ the single stars are part of the dynamical tree.
 //++ Since the assymetry in supernovae are taken care of by the 
 //++   dynamical model no kicks are applied.
-//++ byA
 
 //   version 1.0:  Februari 1993   Simon F. Portegies Zwart
 //                                 spz@grape.c.u-tokyo.ac.jp 
@@ -118,6 +117,7 @@ int main(int argc, char ** argv)
     real mass=1;
     real endtime=100;
     real metal= cnsts.parameters(Zsun);
+    real windscaling = 1.0; //(AD 16/10/2020) so that windscaling can be pass as an argument
     
     char  *comment;
     int input_seed=0, actual_seed;
@@ -128,7 +128,7 @@ int main(int argc, char ** argv)
     
     if (argc <= 1)
         {
-            cerr <<"usage: starev -M # -R # -T # -t # -S # -s # -N # -I # -n # -z #[-c \"..\"]\n";
+            cerr <<"usage: starev -M # -R # -T # -t # -S # -s # -N # -I # -n # -z # -w #[-c \"..\"]\n";
         exit(1);
         }
  
@@ -162,6 +162,8 @@ int main(int argc, char ** argv)
             case 'n': n = atoi(poptarg);
                       break;
             case 'z': metal = atof(poptarg);
+                      break;
+            case 'w': windscaling = atof(poptarg);
                       break;
             case 'c': c_flag = TRUE;
 		      comment = poptarg;
@@ -220,7 +222,7 @@ int main(int argc, char ** argv)
 
     //node *the_star = root->get_oldest_daughter();
 
-    addstar(root, t_start, type, z, n_init+i, false);
+    addstar(root, t_start, type, z, windscaling, n_init+i, false); //(AD 16/10/2020) so that windscaling can be pass as an argument
     
     // Starev does not include hdyn.h nor the hdyn library
     // get_use_hdyn is therefore not defined.

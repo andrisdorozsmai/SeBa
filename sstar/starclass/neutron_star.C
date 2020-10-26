@@ -244,6 +244,7 @@ void neutron_star::evolve_element(const real end_time) {
 
       next_update_age = relative_age + cnsts.safety(maximum_timestep);
 
+
       update();
    }
 

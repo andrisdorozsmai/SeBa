@@ -33,7 +33,7 @@ class single_star;
 class node;
 single_star * new_single_star(stellar_type type = Main_Sequence, 
 			      int id=0, real z = cnsts.parameters(solar_metalicity),
-			      real t_cur = 0, real t_rel=0,
+			      real wind_scaling = 1.0, real t_cur = 0, real t_rel=0,
                               real m_rel=1, real m_tot=1, 
 			      real m_core=0, real co_core=0,
 			      real p_rot=0, real b_fld=0,

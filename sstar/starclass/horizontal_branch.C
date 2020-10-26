@@ -41,7 +41,6 @@ horizontal_branch::horizontal_branch(hertzsprung_gap & h) : single_star(h) {
 
     update();
     post_constructor();
-      
 }
 
 
@@ -63,6 +62,7 @@ horizontal_branch::horizontal_branch(main_sequence & m) : single_star(m) {
     // but helium stars have He envelope and CO core....
     if (get_companion()->get_envelope_mass() > 0)
       add_mass_to_accretor(get_companion()->get_envelope_mass(), get_companion()->hydrogen_envelope_star());
+      
   }
 
   adjust_next_update_age();
@@ -447,12 +447,14 @@ void horizontal_branch::update_wind_constant() {
     
     // Nieuwenhuijzen & de Jager 1990
     // Massive stars
-    // devided by two to get reasonable single wolf rayet stars
+    // divided by two to get reasonable single wolf rayet stars
+    // (AD: 15 Sep 2020) Update: removed the factor two decrease in mass loss rates
+    // because scaling factor was already added
     real dm_dj = 0;
     if (luminosity > 4000.) {
         real x = min(1.0, (luminosity - 4000.0)/500.0);
         dm_dj = x * 9.6310E-15 * pow(radius, 0.81) * pow(luminosity, 1.24) * 
-        pow(get_total_mass(), 0.16)*pow(metalicity/cnsts.parameters(solar_metalicity), 0.85)/2.;
+        pow(get_total_mass(), 0.16)*pow(metalicity/cnsts.parameters(solar_metalicity), 0.85)/2;
     }
     
     // Vink 2000, 2001
@@ -568,18 +570,34 @@ void horizontal_branch::update_wind_constant() {
     //}
     
     
-    
     //LBV
     real dm_lbv = 0;
     real x_lbv = 1.0E-5*radius*sqrt(luminosity);
     if(luminosity > 6.0E5 && x_lbv > 1.0) {
-        dm_lbv = 0.1 * pow(x_lbv-1.0, 3)*(luminosity/6.0E5-1.0);
-    }
+        //(AD: 15 Sep 2020) Variation 1: Standard Seba
+        //dm_lbv = 0.1 * pow(x_lbv-1.0, 3)*(luminosity/6.0E5-1.0);
+        //wind_constant = scaling_factor_sw * max(max(max(dm_wr, dm_dj_v), dm_r), 0.0) + dm_lbv; 
+        
+        //(AD: 15 Sep 2020)  Variation 2: Belczynski et al 2010
+        dm_lbv = 1.5*pow(10,-4); // 
+        wind_constant = dm_lbv; // Belczynski doesn't add the other mass loss rates on top of
+                                // the others
 
-    wind_constant = max(max(max(dm_wr, dm_dj_v), dm_r), 0.0) + dm_lbv;
+        //(AD: 15 Sep 2020)  variation 3: D.J. Hiller et al 2001,
+        // also see K. Davidson, R.M. Humphreys: Eta Carinea and Supernova impostors, eq 4.1
+        //dm_lbv = pow(10,-4) * pow((luminosity/6.0E5),0.75) ;
+        //wind_constant = dm_lbv; // Highly uncertain, but the formula follows from
+                                // observations anyway, so don't add the other mass loss rates
+
+        return;
+        }
+
+    // (AD: 15 Sep 2020) to account for clumping etc
+    // or the inaccuracies in the Sobolev method, see
+    // J.O. Sundqvist+ 2019 and R. Bjorklund+ 2020
+    wind_constant = scaling_factor_sw * max(max(max(dm_wr, dm_dj_v), dm_r), 0.0) + dm_lbv;
 
     //PRC(luminosity);PRC(dm_wr);PRC(dm_dj_v);PRC(dm_r);PRC(dm_lbv);PRL(wind_constant);
-    
 }
 
 

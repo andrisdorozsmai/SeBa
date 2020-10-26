@@ -15,7 +15,7 @@
 black_hole::black_hole(hyper_giant & w) : single_star(w) {
 
       delete &w;
-
+      
       suddenly_lost_mass = 0;
       real m_tot = get_total_mass();
 
@@ -52,7 +52,7 @@ black_hole::black_hole(hyper_giant & w) : single_star(w) {
 black_hole::black_hole(super_giant & g) : single_star(g) {
 
       delete &g;
-    
+
       suddenly_lost_mass = 0;
       real m_tot = get_total_mass();
       core_mass = black_hole_mass(COcore_mass);
@@ -87,7 +87,7 @@ black_hole::black_hole(super_giant & g) : single_star(g) {
 black_hole::black_hole(thorne_zytkow & t) : single_star(t) {
 
       delete &t;
-
+      
       magnetic_field  = 0;
       rotation_period = 0;
 
@@ -123,7 +123,7 @@ black_hole::black_hole(thorne_zytkow & t) : single_star(t) {
 black_hole::black_hole(helium_giant & h) : single_star(h) {
 
       delete &h;
-
+      
       suddenly_lost_mass = 0;
       real m_tot = get_total_mass();
       // (GN + SilT Oct  5 2016) In ::black_hole_mass, core mass is assumed to be helium core mass	

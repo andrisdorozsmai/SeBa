@@ -49,7 +49,7 @@
 //  addstar  -- for all particles, add a star part using "new star()".
 //-----------------------------------------------------------------------------
 
-void  addstar(node * b, real t_current, stellar_type type, real z,int id, bool verbose)
+void  addstar(node * b, real t_current, stellar_type type, real z, real wind_scaling, int id, bool verbose)
 {
   //    if(!((star*)b->get_starbase())->get_seba_counters()) {
   //      cerr << "Initialize SeBa counters" << endl;
@@ -62,7 +62,7 @@ void  addstar(node * b, real t_current, stellar_type type, real z,int id, bool v
 	int  n_star = 0;
 
 	for_all_daughters(node, b, bi) {
-	    addstar(bi, t_current, type, z, id, verbose);
+	    addstar(bi, t_current, type, z, wind_scaling, id, verbose);
 
 	    if (verbose) {
 		real m = bi->get_starbase()
@@ -118,7 +118,7 @@ void  addstar(node * b, real t_current, stellar_type type, real z,int id, bool v
 	  //   << " t_rel = " << t_rel << " t_cur = " << t_cur << endl;
 	
 	    type = local_type;
-	    single_star* new_star = new_single_star(type, id, z, t_cur,
+	    single_star* new_star = new_single_star(type, id, z, wind_scaling, t_cur,
 						    t_rel,
 						    m_rel, m_tot, m_core,
 						    mco_core,
@@ -159,7 +159,7 @@ void  addstar(node * b, real t_current, stellar_type type, real z,int id, bool v
 	      mco_core = 0;
 	    }
 	
-	    single_star* new_star = new_single_star(local_type, id, z,
+	    single_star* new_star = new_single_star(local_type, id, z, wind_scaling,
 						    t_cur, t_rel,
 						    m_rel, m_tot, m_core,
 						    mco_core,

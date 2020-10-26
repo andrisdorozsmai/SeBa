@@ -71,7 +71,6 @@ helium_giant::helium_giant(helium_star & h) : single_star(h) {
     
     update();
     post_constructor();
-
 }
 
 // Adjust radius & luminosity at relative_age
@@ -650,15 +649,30 @@ void helium_giant::update_wind_constant() {
     real neta = 0.5; 
     real dm_r = neta * 4.E-13 * radius * luminosity / get_total_mass();
 
-    //HPT2000
-    //Reduced WR-like mass loss for small H-envelope mass
-    real dm_wr = 1.E-13 * pow(luminosity, 1.5);
+    //(AD: 15 Oct 2020) WR winds consisting of three components.
+    // 1) Empirical formula from  Hamann et al (1995) 1995A&A...299..151H
+    // 2) Clumping factor from Hamann & Koesterke (1998) 1998A&A...335.1003H
+    // 3) Metallicity scaling from Vink & de Koter 2005
+    real clumping_factor = 0.5;
+    real dm_wr = clumping_factor * 1.E-13 * pow(luminosity, 1.5)
+                * pow(metalicity/cnsts.parameters(solar_metalicity),0.86);
     
-    wind_constant = max(max(dm_wr, dm_r), 0.0);   
+    //(AD: 15 Oct 2020) added WR wind-prescription from Sanders & Vink 2020 (2009.01849)
+    //real alpha_sv = 0.32 * log10(metalicity/cnsts.parameters(solar_metalicity)) + 1.40;
+    //real loglum10 = -0.87 * log10(metalicity/cnsts.parameters(solar_metalicity)) + 5.06;
+    //real logdm10 = -0.75 * log10(metalicity/cnsts.parameters(solar_metalicity)) - 4.06;
+    //real lum10 = pow(10, loglum10);
+    //real dm10 = pow(10, logdm10);
+    //dm_wr = dm10 * pow((log10(luminosity/lum10)), alpha_sv) * pow((luminosity/(10*lum10)), 0.75);
+    
 
-    // (SilT Jan 2020) metalicity dependence on average with (Z/Z_sun)^0.85
-    // Vink & de Koter 2005
-    wind_constant *= pow(metalicity/cnsts.parameters(solar_metalicity),0.85);
+    
+    // (AD: 15 Sep 2020) to account for clumping etc
+    // or the inaccuracies in the Sobolev method, see
+    // J.O. Sundqvist+ 2019 and R. Bjorklund+ 2020      
+    //(AD: 15 Sep 2020) Choose always WR winds
+    wind_constant = dm_wr;   
+    //wind_constant = scaling_factor_sw * max(max(dm_wr, dm_r), 0.0);
 	
 }
 
