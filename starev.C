@@ -17,6 +17,7 @@
 //++ the single stars are part of the dynamical tree.
 //++ Since the assymetry in supernovae are taken care of by the 
 //++   dynamical model no kicks are applied.
+//++ byA
 
 //   version 1.0:  Februari 1993   Simon F. Portegies Zwart
 //                                 spz@grape.c.u-tokyo.ac.jp 
